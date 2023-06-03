@@ -1,6 +1,25 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import { AppProps } from 'next/app';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { useEffect } from 'react';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+const queryClient = new QueryClient();
+
+function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Code that needs to be executed on the client-side
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        // Perform browser-specific operations here
+      }
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Component {...pageProps} />
+    </QueryClientProvider>
+  );
 }
+
+export default MyApp;
