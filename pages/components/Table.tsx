@@ -1,5 +1,5 @@
   import { useState, useEffect } from 'react';
-  import { Table, Button, Modal, Form, Input } from 'antd';
+  import { Table, Button, Modal, Form, Input, TableColumnType } from 'antd';
   import { useQuery, useMutation, useQueryClient } from 'react-query';
   import { fetchUsers, addUser, editUser, deleteUser } from '../api/api';
 
@@ -12,8 +12,18 @@
     interface User {
       id: number;
       name: string;
-      // diğer özellikler
+      username: string; // Include the username property
+      email: string;
+      address: {
+        street: string;
+        suite: string;
+        city: string;
+        // Other address properties...
+      };
+      phone: string;
+      // Other user properties...
     }
+    
 
     const [users, setUsers] = useState<User[]>([]);
 
@@ -121,22 +131,43 @@
       deleteUserMutation.mutate(userId);
     };
 
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
-        title: 'Username',
-        dataIndex: 'username',
-        key: 'username',
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-      },
+      const columns: TableColumnType<User>[] = [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          filters: users.map((user) => ({ text: user.name, value: user.name })),
+          onFilter: (value: string | number | boolean, record: User) => record.name.includes(value as string),
+        },
+        {
+          title: 'Username',
+          dataIndex: 'username',
+          key: 'username',
+          filters: users.map((user) => ({ text: user.username, value: user.username })),
+          onFilter: (value: string | number | boolean, record: User) => record.username.includes(value as string),
+        },
+        {
+          title: 'Email',
+          dataIndex: 'email',
+          key: 'email',
+          filters: users.map((user) => ({ text: user.email, value: user.email })),
+          onFilter: (value: string | number | boolean, record: User) => record.email.includes(value as string),
+        },
+        {
+          title: 'City',
+          dataIndex: ['address', 'city'],
+          key: 'city',
+          filters: users.map((user) => ({ text: user.address.city, value: user.address.city })),
+          onFilter: (value: string | number | boolean, record: User) =>
+            record.address.city.includes(value as string),
+        },
+        {
+          title: 'Phone',
+          dataIndex: 'phone',
+          key: 'phone',
+          filters: users.map((user) => ({ text: user.phone, value: user.phone })),
+          onFilter: (value: string | number | boolean, record: User) => record.phone.includes(value as string),
+        },
       {
         title: 'Actions',
         key: 'actions',
